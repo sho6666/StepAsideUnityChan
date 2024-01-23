@@ -15,6 +15,8 @@ public class ItemGenerator : MonoBehaviour
     public GameObject conePrefab;
 
     public GameObject unitychan;
+
+    public GameObject generationrange;
     //スタート地点
     private int startPos = 80;
     //ゴール地点
@@ -28,6 +30,8 @@ public class ItemGenerator : MonoBehaviour
 
     private int generateFunctionCallCount = 0;
 
+    private float generationpoint;
+
 
 
 
@@ -37,7 +41,11 @@ public class ItemGenerator : MonoBehaviour
     {
         unitychan = GameObject.Find("unitychan");
 
-        itemgenerate();
+        generationrange = GameObject.Find("generationrange");
+
+        generationpoint = unitychan.transform.position.z + 15;
+
+        
     }
 
 
@@ -46,13 +54,14 @@ public class ItemGenerator : MonoBehaviour
     {
         unitychan = GameObject.Find("unitychan");
 
-        unitychanDistance = unitychan.transform.position.z - (50 * (generateFunctionCallCount-1));
+        generationrange = GameObject.Find("generationrange");
 
-        if (unitychanDistance > 50)
-        {
-            itemgenerate();
+        itemgenerate();
 
-        }
+           
+        
+       
+        
 
 
     }
@@ -61,7 +70,7 @@ public class ItemGenerator : MonoBehaviour
     {
         generateFunctionCallCount++;
 
-        for (float i = unitychan.transform.position.z+itemInterval; i < unitychan.transform.position.z+50&&i<goalPos; i += itemInterval)
+        if (generationpoint<generationrange.transform.position.z&&generationpoint<goalPos)
         {
             //どのアイテムを出すのかをランダムに設定
             int num = Random.Range(1, 11);
@@ -71,7 +80,7 @@ public class ItemGenerator : MonoBehaviour
                 for (float j = -1; j <= 1; j += 0.4f)
                 {
                     GameObject cone = Instantiate(conePrefab);
-                    cone.transform.position = new Vector3(4 * j, cone.transform.position.y, i);
+                    cone.transform.position = new Vector3(4 * j, cone.transform.position.y, generationpoint);
 
                 }
             }
@@ -90,17 +99,21 @@ public class ItemGenerator : MonoBehaviour
                     {
                         //コインを生成
                         GameObject coin = Instantiate(coinPrefab);
-                        coin.transform.position = new Vector3(posRange * j, coin.transform.position.y, i + offsetZ);
+                        coin.transform.position = new Vector3(posRange * j, coin.transform.position.y, generationpoint + offsetZ);
                     }
                     else if (7 <= item && item <= 9)
                     {
                         //車を生成
                         GameObject car = Instantiate(carPrefab);
-                        car.transform.position = new Vector3(posRange * j, car.transform.position.y, i + offsetZ);
+                        car.transform.position = new Vector3(posRange * j, car.transform.position.y, generationpoint + offsetZ);
                     }
                 }
             }
+
+            generationpoint += 15;
         }
+
+       
 
         Debug.Log("GenerateItems function call count: " + generateFunctionCallCount);
 
